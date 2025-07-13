@@ -1,8 +1,8 @@
+// assets/script.js
+// Specialized Virtual Deals - Main Script
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* =================================================================== */
     /* --- 1. General Page Functionality (Header & Scrolling) --- */
-    /* =================================================================== */
     const header = document.getElementById('header');
     if (header) {
         window.addEventListener('scroll', () => {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor =>  {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
             const targetEl = document.querySelector(targetId);
@@ -28,9 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* =================================================================== */
     /* --- 2. Terms & Conditions Toggle --- */
-    /* =================================================================== */
     const termsSection = document.getElementById('terms');
     const closeTermsBtn = document.getElementById('closeTermsBtn');
 
@@ -47,12 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
         closeTermsBtn.addEventListener('click', () => toggleTerms(false));
     }
 
-    /* =================================================================== */
     /* --- 3. Detailed Services Carousel --- */
-    /* =================================================================== */
     const servicesContainer = document.querySelector('.detailed-services .carousel-container');
     if (servicesContainer) {
-        // ... (Service carousel logic remains the same)
         const track = document.getElementById('carouselTrack');
         const dots = servicesContainer.querySelectorAll('.carousel-nav .nav-dot');
         const progressBar = document.getElementById('progressBar');
@@ -104,12 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
         servicesContainer.addEventListener('mouseleave', resetAutoPlay);
     }
 
-    /* =================================================================== */
     /* --- 4. Features Carousel --- */
-    /* =================================================================== */
     const featuresContainer = document.getElementById('featuresCarouselContainer');
     if (featuresContainer) {
-        // ... (Features carousel logic remains the same)
         const track = document.getElementById('featuresCarouselTrack');
         const nav = document.getElementById('featuresCarouselNav');
         const progressBar = document.getElementById('featuresProgressBar');
@@ -170,9 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         featuresContainer.addEventListener('mouseleave', resetAutoPlay);
     }
 
-    /* =================================================================== */
     /* --- 5. Chatbot Functionality --- */
-    /* =================================================================== */
     const chatIcon = document.getElementById('chatIcon');
     const chatbox = document.getElementById('chatbox');
     const closeBtn = document.getElementById('closeBtn');
@@ -182,37 +172,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtns = document.querySelectorAll('.back-btn');
     const contactFooter = document.querySelector('.contact-footer');
 
-    // Function to toggle between question view and answer view
     function showChatView(viewToShow) {
         const isQuestions = viewToShow === questionsList;
         questionsList.classList.toggle('active', isQuestions);
+        answerSections.forEach(section => section.classList.remove('active'));
+        if (!isQuestions) viewToShow.classList.add('active');
+        if (contactFooter) contactFooter.style.display = isQuestions ? 'block' : 'none';
 
-        answerSections.forEach(section => {
-            section.classList.remove('active');
+        requestAnimationFrame(() => {
+            const chatMainView = document.querySelector('.chat-main-view');
+            if (chatMainView) chatMainView.scrollTop = 0;
         });
-
-        if (!isQuestions) {
-            viewToShow.classList.add('active');
-        }
-
-        if (contactFooter) {
-            contactFooter.style.display = isQuestions ? 'block' : 'none';
-        }
     }
 
-    // Toggle chatbot open/close when clicking icon
     chatIcon.addEventListener('click', () => {
         chatbox.classList.toggle('active');
         const dot = chatIcon.querySelector('.notification-dot');
         if (dot) dot.style.display = 'none';
     });
 
-    // Close chatbot when clicking close (X)
     closeBtn.addEventListener('click', () => {
         chatbox.classList.remove('active');
     });
 
-    // When a question is clicked, show the corresponding answer section
     questionBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const answerId = `answer-${btn.dataset.answer}`;
@@ -221,21 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // When "Back to Questions" is clicked, return to the questions list
     backBtns.forEach(btn => {
         btn.addEventListener('click', () => showChatView(questionsList));
     });
 
-    // Hide chatbox when clicking outside of it
     document.addEventListener('click', (event) => {
         if (!chatbox.contains(event.target) && !chatIcon.contains(event.target)) {
             chatbox.classList.remove('active');
         }
     });
 
-    /* =================================================================== */
-    /* --- 6. Chatbot Email Form Submission (RESTORED) --- */
-    /* =================================================================== */
+    /* --- 6. Chatbot Email Form Submission --- */
     const emailForm = document.getElementById('emailForm');
     const emailInput = document.getElementById('emailInput');
     const submitBtn = document.getElementById('submitBtn');
@@ -243,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const PROXY_ENDPOINT = 'https://specialized-virtual-deals-form.matthew-patacsil021.workers.dev';
 
-    // Utility function to validate email format
     const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     if (emailForm) {
@@ -258,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Begin submission state
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
             formMessage.textContent = '';
@@ -267,12 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch(PROXY_ENDPOINT, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-site-token': 'svd2024securekey' // secret token to prevent unauthorized use
+                        'Content-Type': 'application/json'
+                        
                     },
                     body: JSON.stringify({ email })
                 });
-
 
                 const data = await res.json();
 
@@ -295,26 +270,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-function showChatView(viewToShow) {
-    const isQuestions = viewToShow === questionsList;
-    questionsList.classList.toggle('active', isQuestions);
-
-    answerSections.forEach(section => section.classList.remove('active'));
-
-    if (!isQuestions) {
-        viewToShow.classList.add('active');
-    }
-
-    if (contactFooter) {
-        contactFooter.style.display = isQuestions ? 'block' : 'none';
-    }
-
-    // Reset scroll and force immediate rendering
-    requestAnimationFrame(() => {
-        const chatMainView = document.querySelector('.chat-main-view');
-        if (chatMainView) {
-            chatMainView.scrollTop = 0;
-        }
-    });
-}
